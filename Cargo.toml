@@ -17,6 +17,7 @@ keywords = [
 ]
 license = "MIT/Apache-2.0"
 include = [
+    "build.rs",
     "CHANGELOG.md",
     "Cargo.toml",
     "LICENSE-MIT",
