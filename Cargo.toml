@@ -1,0 +1,59 @@
+[package]
+name = "xkcd"
+version = "0.1.0"
+authors = ["Nikita Pekin <contact@nikitapek.in>"]
+description = "Interface for the XKCD web API"
+repository = "https://github.com/indiv0/xkcd-rs"
+documentation = "https://indiv0.github.io/xkcd-rs/xkcd/"
+readme = "README.md"
+keywords = [
+    "comic",
+    "comics",
+    "xkcd",
+    "API",
+    "hyper",
+    "web",
+    "library",
+]
+license = "MIT/Apache-2.0"
+include = [
+    "CHANGELOG.md",
+    "Cargo.toml",
+    "LICENSE-MIT",
+    "LICENSE-APACHE",
+    "README.md",
+    "src/**/*.rs",
+]
+build = "build.rs"
+
+[build-dependencies.serde_codegen]
+optional = true
+version = "0.7.10"
+
+[dependencies]
+log = "0.3.6"
+rand = "0.3.14"
+serde = "0.7.10"
+serde_json = "0.7.1"
+
+[dependencies.clippy]
+optional = true
+version = "0.0"
+
+[dependencies.hyper]
+optional = true
+version = "0.9.5"
+
+[dependencies.serde_macros]
+optional = true
+version = "0.7.10"
+
+[dependencies.url]
+features = ["serde"]
+version = "1.1.1"
+
+[features]
+default = ["hyper", "with-syntex"]
+nightly = ["serde_macros"]
+nightly-testing = ["clippy", "nightly"]
+with-syntex = ["serde_codegen"]
