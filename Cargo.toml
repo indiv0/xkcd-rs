@@ -8,15 +8,14 @@ documentation = "https://indiv0.github.io/xkcd-rs/xkcd/"
 readme = "README.md"
 keywords = [
     "comic",
-    "comics",
     "xkcd",
     "API",
-    "hyper",
     "web",
     "library",
 ]
 license = "MIT/Apache-2.0"
 include = [
+    "build.rs",
     "CHANGELOG.md",
     "Cargo.toml",
     "LICENSE-MIT",
