@@ -12,8 +12,6 @@
 //! For more information, see [XKCD's API
 //! documentation](https://xkcd.com/json.html).
 
-use url::Url;
-
 #[cfg(feature = "nightly")]
 include!("model.in.rs");
 
@@ -23,12 +21,12 @@ include!(concat!(env!("OUT_DIR"), "/model.rs"));
 #[cfg(test)]
 mod tests {
     use serde_json::from_str;
-    use url::Url;
 
     use super::XkcdResponse;
+    use super::super::parse_xkcd_response;
 
     #[test]
-    fn test_xkcd_response_deserialize() {
+    fn test_parse_xkcd_response() {
         let result = r#"
             {
                 "month": "9",
@@ -48,7 +46,7 @@ mod tests {
         assert_eq!(response, XkcdResponse {
             month: 9,
             num: 1572,
-            link: "http://goo.gl/forms/pj0OhX6wfO".to_owned().parse::<Url>().unwrap(),
+            link: "http://goo.gl/forms/pj0OhX6wfO".to_owned(),
             year: 2015,
             news: "".to_owned(),
             safe_title: "xkcd Survey".to_owned(),
@@ -57,6 +55,39 @@ mod tests {
             img: "http://imgs.xkcd.com/comics/xkcd_survey.png".to_owned(),
             title: "xkcd Survey".to_owned(),
             day: 1,
+        });
+    }
+
+    #[test]
+    fn test_parse_xkcd_response_no_link() {
+        let result = r#"
+            {
+                "month": "6",
+                "num": 1698,
+                "link": "",
+                "year": "2016",
+                "news": "",
+                "safe_title": "Theft Quadrants",
+                "transcript": "",
+                "alt": "TinyURL was the most popular link shortener for long enough that it made it into a lot of printed publications. I wonder what year the domain will finally lapse and get picked up by a porn site.",
+                "img": "http:\/\/imgs.xkcd.com\/comics\/theft_quadrants.png",
+                "title": "Theft Quadrants",
+                "day": "24"
+            }
+        "#;
+        let response = parse_xkcd_response::<XkcdResponse>(&result).unwrap();
+        assert_eq!(response, XkcdResponse {
+            month: 6,
+            num: 1698,
+            link: "".to_owned(),
+            year: 2016,
+            news: "".to_owned(),
+            safe_title: "Theft Quadrants".to_owned(),
+            transcript: "".to_owned(),
+            alt: "TinyURL was the most popular link shortener for long enough that it made it into a lot of printed publications. I wonder what year the domain will finally lapse and get picked up by a porn site.".to_owned(),
+            img: "http://imgs.xkcd.com/comics/theft_quadrants.png".to_owned(),
+            title: "Theft Quadrants".to_owned(),
+            day: 24,
         });
     }
 }
