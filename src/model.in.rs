@@ -6,8 +6,8 @@ pub struct XkcdResponse {
     pub month: u8,
     /// The number/ID of the comic.
     pub num: u32,
-    /// A URL to use for in the anchor tag of the hyperlink surrounding the
-    /// image, if the image is a hyperlinked one.
+    /// The URL in the anchor tag of the hyperlink surrounding the image, if the
+    /// image is a hyperlinked one.
     pub link: String,
     /// The year the comic was published in.
     pub year: u32,
