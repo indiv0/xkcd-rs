@@ -139,6 +139,8 @@ mod test_helpers {
 
 #[cfg(test)]
 mod tests {
+    use url::Url;
+
     use model::XkcdResponse;
 
     use super::parse_xkcd_response;
@@ -170,7 +172,7 @@ mod tests {
             safe_title: "Theft Quadrants".to_owned(),
             transcript: "".to_owned(),
             alt: "TinyURL was the most popular link shortener for long enough that it made it into a lot of printed publications. I wonder what year the domain will finally lapse and get picked up by a porn site.".to_owned(),
-            img: "http://imgs.xkcd.com/comics/theft_quadrants.png".to_owned(),
+            img: "http://imgs.xkcd.com/comics/theft_quadrants.png".to_owned().parse::<Url>().unwrap(),
             title: "Theft Quadrants".to_owned(),
             day: 24,
         });

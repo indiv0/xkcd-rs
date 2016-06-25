@@ -12,6 +12,8 @@
 //! For more information, see [XKCD's API
 //! documentation](https://xkcd.com/json.html).
 
+use url::Url;
+
 #[cfg(feature = "nightly")]
 include!("model.in.rs");
 
@@ -21,6 +23,7 @@ include!(concat!(env!("OUT_DIR"), "/model.rs"));
 #[cfg(test)]
 mod tests {
     use serde_json::from_str;
+    use url::Url;
 
     use super::XkcdResponse;
     use super::super::parse_xkcd_response;
@@ -52,7 +55,7 @@ mod tests {
             safe_title: "xkcd Survey".to_owned(),
             transcript: "Introducing the XKCD SURVEY! A search for weird correlations.\n\nNOTE: This survey is anonymous, but all responses will be posted publicly so people can play with the data.\n\nClick here to take the survey.\n\nhttp:\n\ngoo.gl\nforms\nlzZr7P9Qlm\n\nOr click here, or here. The whole comic is a link because I still haven't gotten the hang of HTML imagemaps.\n\n{{Title text: The xkcd Survey: Big Data for a Big Planet}}".to_owned(),
             alt: "The xkcd Survey: Big Data for a Big Planet".to_owned(),
-            img: "http://imgs.xkcd.com/comics/xkcd_survey.png".to_owned(),
+            img: "http://imgs.xkcd.com/comics/xkcd_survey.png".to_owned().parse::<Url>().unwrap(),
             title: "xkcd Survey".to_owned(),
             day: 1,
         });
@@ -85,7 +88,7 @@ mod tests {
             safe_title: "Theft Quadrants".to_owned(),
             transcript: "".to_owned(),
             alt: "TinyURL was the most popular link shortener for long enough that it made it into a lot of printed publications. I wonder what year the domain will finally lapse and get picked up by a porn site.".to_owned(),
-            img: "http://imgs.xkcd.com/comics/theft_quadrants.png".to_owned(),
+            img: "http://imgs.xkcd.com/comics/theft_quadrants.png".to_owned().parse::<Url>().unwrap(),
             title: "Theft Quadrants".to_owned(),
             day: 24,
         });

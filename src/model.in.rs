@@ -20,7 +20,7 @@ pub struct XkcdResponse {
     /// Alt text for the comic.
     pub alt: String,
     /// A link to the comic image.
-    pub img: String,
+    pub img: Url,
     /// The title of the comic.
     pub title: String,
     /// The day of the month the comic was published on.
