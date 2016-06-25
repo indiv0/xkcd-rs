@@ -136,3 +136,43 @@ mod test_helpers {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use model::XkcdResponse;
+
+    use super::parse_xkcd_response;
+
+    #[test]
+    fn test_parse_xkcd_response() {
+        let result = r#"
+            {
+                "month": "6",
+                "num": 1698,
+                "link": "",
+                "year": "2016",
+                "news": "",
+                "safe_title": "Theft Quadrants",
+                "transcript": "",
+                "alt": "TinyURL was the most popular link shortener for long enough that it made it into a lot of printed publications. I wonder what year the domain will finally lapse and get picked up by a porn site.",
+                "img": "http:\/\/imgs.xkcd.com\/comics\/theft_quadrants.png",
+                "title": "Theft Quadrants",
+                "day": "24"
+            }
+        "#;
+        let response = parse_xkcd_response::<XkcdResponse>(&result).unwrap();
+        assert_eq!(response, XkcdResponse {
+            month: 6,
+            num: 1698,
+            link: "".to_owned(),
+            year: 2016,
+            news: "".to_owned(),
+            safe_title: "Theft Quadrants".to_owned(),
+            transcript: "".to_owned(),
+            alt: "TinyURL was the most popular link shortener for long enough that it made it into a lot of printed publications. I wonder what year the domain will finally lapse and get picked up by a porn site.".to_owned(),
+            img: "http://imgs.xkcd.com/comics/theft_quadrants.png".to_owned(),
+            title: "Theft Quadrants".to_owned(),
+            day: 24,
+        });
+    }
+}
