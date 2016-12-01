@@ -10,9 +10,9 @@
 #![deny(missing_docs)]
 #![deny(non_camel_case_types)]
 #![deny(warnings)]
+#![cfg_attr(feature = "nightly", feature(custom_derive, proc_macro))]
+#![cfg_attr(feature = "clippy", feature(plugin))]
 #![cfg_attr(feature = "clippy", plugin(clippy))]
-#![cfg_attr(feature = "nightly", feature(custom_derive, plugin))]
-#![cfg_attr(feature = "nightly", plugin(serde_macros))]
 
 //! A library providing Rust bindings for the XKCD web API.
 //!
@@ -34,6 +34,9 @@ extern crate hyper;
 extern crate log;
 extern crate rand;
 extern crate serde;
+#[cfg(feature = "nightly")]
+#[macro_use]
+extern crate serde_derive;
 extern crate serde_json;
 extern crate url;
 
@@ -63,7 +66,7 @@ fn parse_xkcd_response<T>(response: &str) -> Result<T>
 /// Should be implemented for clients to send requests to the XKCD API.
 pub trait XkcdRequestSender {
     /// Performs an API call to the XKCD web API.
-    fn send<'a>(&self, method: &str) -> HttpRequestResult<String>;
+    fn send(&self, method: &str) -> HttpRequestResult<String>;
 }
 
 #[cfg(feature = "hyper")]
@@ -131,7 +134,7 @@ mod test_helpers {
     }
 
     impl XkcdRequestSender for MockXkcdRequestSender {
-        fn send<'a>(&self, _: &str) -> Result<String, HttpRequestError> {
+        fn send(&self, _: &str) -> Result<String, HttpRequestError> {
             Ok(self.response.clone())
         }
     }
