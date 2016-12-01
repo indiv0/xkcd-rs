@@ -1,3 +1,13 @@
+<a name="v0.2.1"></a>
+##  (2016-12-01)
+
+
+#### Documentation
+
+* **XkcdResponse:**  fix doc string for the `link` field. ([356ac25e](https://github.com/indiv0/xkcd-rs/commit/356ac25ee18a2a40aa2547c5bbef04cd258392dd))
+
+
+
 <a name="v0.2.0"></a>
 ## v0.2.0 (2016-06-25)
 
