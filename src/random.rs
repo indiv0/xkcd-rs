@@ -34,7 +34,7 @@ pub fn random_in_range<R>(client: &R, range: Range<u32>) -> Result<XkcdResponse>
 pub fn random<R>(client: &R) -> Result<XkcdResponse>
     where R: XkcdRequestSender,
 {
-    let latest_comic = try!(comics::latest(client));
+    let latest_comic = comics::latest(client)?;
     random_in_range(client, (1..latest_comic.num + 1))
 }
 

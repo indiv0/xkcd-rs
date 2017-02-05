@@ -15,7 +15,6 @@ keywords = [
 ]
 license = "MIT/Apache-2.0"
 include = [
-    "build.rs",
     "CHANGELOG.md",
     "Cargo.toml",
     "LICENSE-MIT",
@@ -23,17 +22,13 @@ include = [
     "README.md",
     "src/**/*.rs",
 ]
-build = "build.rs"
-
-[build-dependencies.serde_codegen]
-optional = true
-version = "0.8.19"
 
 [dependencies]
 log = "0.3.6"
 rand = "0.3.14"
-serde = "0.8.19"
-serde_json = "0.8.3"
+serde = "0.9.5"
+serde_json = "0.9.4"
+serde_derive = "0.9.5"
 
 [dependencies.clippy]
 optional = true
@@ -43,16 +38,10 @@ version = "0.0"
 optional = true
 version = "0.9.5"
 
-[dependencies.serde_derive]
-optional = true
-version = "0.8.19"
-
 [dependencies.url]
 features = ["serde"]
 version = "1.1.1"
 
 [features]
-default = ["hyper", "with-syntex"]
-nightly = ["serde_derive"]
-nightly-testing = ["clippy", "nightly"]
-with-syntex = ["serde_codegen"]
+default = ["hyper"]
+nightly-testing = ["clippy"]
