@@ -13,6 +13,7 @@
 //! documentation](https://xkcd.com/json.html).
 
 use url::Url;
+use url_serde;
 
 /// `XkcdResponse` is the outer wrapper for all results from the XKCD API query.
 #[derive(Clone, Debug, Deserialize, PartialEq)]
@@ -36,6 +37,7 @@ pub struct XkcdResponse {
     /// Alt text for the comic.
     pub alt: String,
     /// A link to the comic image.
+    #[serde(deserialize_with = "url_serde::deserialize")]
     pub img: Url,
     /// The title of the comic.
     pub title: String,

@@ -29,6 +29,7 @@ rand = "0.3.14"
 serde = "0.9.5"
 serde_json = "0.9.4"
 serde_derive = "0.9.5"
+url_serde = "0.1"
 
 [dependencies.clippy]
 optional = true
