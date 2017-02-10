@@ -10,7 +10,6 @@
 #![deny(missing_docs)]
 #![deny(non_camel_case_types)]
 #![deny(warnings)]
-#![cfg_attr(feature = "nightly", feature(custom_derive, proc_macro))]
 #![cfg_attr(feature = "clippy", feature(plugin))]
 #![cfg_attr(feature = "clippy", plugin(clippy))]
 
@@ -34,11 +33,11 @@ extern crate hyper;
 extern crate log;
 extern crate rand;
 extern crate serde;
-#[cfg(feature = "nightly")]
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
 extern crate url;
+extern crate url_serde;
 
 mod error;
 
@@ -56,7 +55,7 @@ use serde::Deserialize;
 fn parse_xkcd_response<T>(response: &str) -> Result<T>
     where T: Debug + Deserialize,
 {
-    let parsed_response = try!(serde_json::from_str(response));
+    let parsed_response = serde_json::from_str(response)?;
     trace!("Parsed response: {:?}", parsed_response);
     Ok(parsed_response)
 }
@@ -87,17 +86,17 @@ mod hyper_support {
             let url = url_string.parse::<Url>().expect("Unable to parse URL");
 
             trace!("Sending query to url: {}", url);
-            let mut response = try!(self.get(url.clone()).send());
+            let mut response = self.get(url.clone()).send()?;
 
             trace!("Status code: {}", response.status);
-            // Ensure we got a valid statuc code.
+            // Ensure we got a valid status code.
             match response.status {
                 StatusCode::NotFound => return Err(HttpRequestError::not_found(url)),
-                _ => {},
+                _ => {}
             }
 
             let mut result = String::new();
-            try!(response.read_to_string(&mut result));
+            response.read_to_string(&mut result)?;
             trace!("Query result: {}", result);
 
             Ok(result)
@@ -127,9 +126,7 @@ mod test_helpers {
 
     impl MockXkcdRequestSender {
         pub fn respond_with<S: Into<String>>(response: S) -> Self {
-            MockXkcdRequestSender {
-                response: response.into(),
-            }
+            MockXkcdRequestSender { response: response.into() }
         }
     }
 
@@ -166,18 +163,25 @@ mod tests {
             }
         "#;
         let response = parse_xkcd_response::<XkcdResponse>(&result).unwrap();
-        assert_eq!(response, XkcdResponse {
-            month: 6,
-            num: 1698,
-            link: "".to_owned(),
-            year: 2016,
-            news: "".to_owned(),
-            safe_title: "Theft Quadrants".to_owned(),
-            transcript: "".to_owned(),
-            alt: "TinyURL was the most popular link shortener for long enough that it made it into a lot of printed publications. I wonder what year the domain will finally lapse and get picked up by a porn site.".to_owned(),
-            img: "http://imgs.xkcd.com/comics/theft_quadrants.png".to_owned().parse::<Url>().unwrap(),
-            title: "Theft Quadrants".to_owned(),
-            day: 24,
-        });
+        assert_eq!(response,
+                   XkcdResponse {
+                       month: 6,
+                       num: 1698,
+                       link: "".to_owned(),
+                       year: 2016,
+                       news: "".to_owned(),
+                       safe_title: "Theft Quadrants".to_owned(),
+                       transcript: "".to_owned(),
+                       alt: "TinyURL was the most popular link shortener for long enough that it \
+                             made it into a lot of printed publications. I wonder what year the \
+                             domain will finally lapse and get picked up by a porn site."
+                           .to_owned(),
+                       img: "http://imgs.xkcd.com/comics/theft_quadrants.png"
+                           .to_owned()
+                           .parse::<Url>()
+                           .unwrap(),
+                       title: "Theft Quadrants".to_owned(),
+                       day: 24,
+                   });
     }
 }

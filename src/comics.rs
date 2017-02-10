@@ -22,7 +22,7 @@ pub fn get<R>(client: &R, id: u32) -> Result<XkcdResponse>
     where R: XkcdRequestSender,
 {
     let method = format!("{}/info.0.json", id);
-    let response = try!(client.send(&method));
+    let response = client.send(&method)?;
     parse_xkcd_response(&response)
 }
 
@@ -30,7 +30,7 @@ pub fn get<R>(client: &R, id: u32) -> Result<XkcdResponse>
 pub fn latest<R>(client: &R) -> Result<XkcdResponse>
     where R: XkcdRequestSender,
 {
-    let response = try!(client.send("info.0.json"));
+    let response = client.send("info.0.json")?;
     parse_xkcd_response(&response)
 }
 
