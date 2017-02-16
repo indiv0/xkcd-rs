@@ -9,14 +9,11 @@
 
 //! Retrieves information on a random XKCD comic.
 
-use std::ops::Range;
-
+use comics;
 use error::Result;
 use model::XkcdResponse;
 use rand::{self, Rng};
-
-use comics;
-
+use std::ops::Range;
 use super::XkcdRequestSender;
 
 /// Retrieves information regarding a random comic from the XKCD website in the

@@ -48,9 +48,8 @@ pub mod comics;
 pub mod model;
 pub mod random;
 
-use std::fmt::Debug;
-
 use serde::Deserialize;
+use std::fmt::Debug;
 
 fn parse_xkcd_response<T>(response: &str) -> Result<T>
     where T: Debug + Deserialize,
@@ -70,15 +69,13 @@ pub trait XkcdRequestSender {
 
 #[cfg(feature = "hyper")]
 mod hyper_support {
-    use std::io::Read;
-
-    use hyper;
-    use hyper::status::StatusCode;
-    use url::Url;
 
     use error::{HttpRequestError, HttpRequestResult};
-
+    use hyper;
+    use hyper::status::StatusCode;
+    use std::io::Read;
     use super::XkcdRequestSender;
+    use url::Url;
 
     impl XkcdRequestSender for hyper::Client {
         fn send(&self, method: &str) -> HttpRequestResult<String> {
@@ -117,7 +114,7 @@ pub use hyper_support::*;
 
 #[cfg(test)]
 mod test_helpers {
-    use super::{XkcdRequestSender, HttpRequestError};
+    use super::{HttpRequestError, XkcdRequestSender};
 
     pub struct MockXkcdRequestSender {
         response: String,
@@ -125,7 +122,7 @@ mod test_helpers {
 
     impl MockXkcdRequestSender {
         pub fn respond_with<S: Into<String>>(response: S) -> Self {
-            MockXkcdRequestSender { response: response.into() }
+            MockXkcdRequestSender { response: response.into(), }
         }
     }
 
@@ -138,11 +135,9 @@ mod test_helpers {
 
 #[cfg(test)]
 mod tests {
-    use url::Url;
-
     use model::XkcdResponse;
-
     use super::parse_xkcd_response;
+    use url::Url;
 
     #[test]
     fn test_parse_xkcd_response() {

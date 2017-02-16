@@ -48,10 +48,9 @@ pub struct XkcdResponse {
 #[cfg(test)]
 mod tests {
     use serde_json::from_str;
-    use url::Url;
-
     use super::XkcdResponse;
     use super::super::parse_xkcd_response;
+    use url::Url;
 
     #[test]
     fn test_parse_xkcd_response() {
