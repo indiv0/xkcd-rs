@@ -7,12 +7,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use serde_json;
 use std::error::Error as StdError;
 use std::fmt;
 use std::io;
 use std::result::Result as StdResult;
-
-use serde_json;
 use url::Url;
 
 /// A convenient alias type for results for `xkcd`.
@@ -82,8 +81,8 @@ impl PartialEq<Error> for Error {
 
         match (self, other) {
             (&HttpRequest(_), &HttpRequest(_)) |
-                (&Io(_), &Io(_)) |
-                (&Json(_), &Json(_)) => true,
+            (&Io(_), &Io(_)) |
+            (&Json(_), &Json(_)) => true,
             _ => false,
         }
     }
