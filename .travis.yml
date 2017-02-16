@@ -16,9 +16,7 @@ rust:
   - stable
 os:
   - linux
-cache:
-  directories:
-    - $HOME/.cargo
+cache: cargo
 before_script:
   # load travis-cargo
   - pip install 'travis-cargo<0.2' --user
