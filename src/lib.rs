@@ -90,9 +90,8 @@ mod hyper_support {
 
             trace!("Status code: {}", response.status);
             // Ensure we got a valid status code.
-            match response.status {
-                StatusCode::NotFound => return Err(HttpRequestError::not_found(url)),
-                _ => {}
+            if let StatusCode::NotFound = response.status {
+                return Err(HttpRequestError::not_found(url));
             }
 
             let mut result = String::new();
