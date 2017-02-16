@@ -81,7 +81,7 @@ mod hyper_support {
     use super::XkcdRequestSender;
 
     impl XkcdRequestSender for hyper::Client {
-        fn send<'a>(&self, method: &str) -> HttpRequestResult<String> {
+        fn send(&self, method: &str) -> HttpRequestResult<String> {
             let url_string = format!("https://xkcd.com/{}", method);
             let url = url_string.parse::<Url>().expect("Unable to parse URL");
 
