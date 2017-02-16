@@ -4,7 +4,8 @@
 
 #### Improvements
 
-* update `serde`/`serde_json`/`serde_derive`, use the `?` operator instead of
+*   remove needless borrows ([07926ed2](https://github.com/indiv0/xkcd-rs/commit/07926ed2c595553177d574b61f2949a1d5d74f87))
+*   update `serde`/`serde_json`/`serde_derive`, use the `?` operator instead of
   try. ([f8c20c0](https://github.com/indiv0/xkcd-rs/commit/f8c20c0efbfa6341578d63fb1b6e2296cf719032))
 
 
