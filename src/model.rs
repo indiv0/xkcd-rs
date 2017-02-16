@@ -69,7 +69,7 @@ mod tests {
                 "day": "1"
             }
         "#;
-        let response = from_str::<XkcdResponse>(&result).unwrap();
+        let response = from_str::<XkcdResponse>(result).unwrap();
         assert_eq!(response, XkcdResponse {
             month: 9,
             num: 1572,
@@ -102,7 +102,7 @@ mod tests {
                 "day": "24"
             }
         "#;
-        let response = parse_xkcd_response::<XkcdResponse>(&result).unwrap();
+        let response = parse_xkcd_response::<XkcdResponse>(result).unwrap();
         assert_eq!(response, XkcdResponse {
             month: 6,
             num: 1698,
