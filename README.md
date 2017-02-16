@@ -2,7 +2,7 @@
 
 <table>
     <tr>
-        <td><strong>Linux / OS X</strong></td>
+        <td><strong>Linux</strong></td>
         <td><a href="https://travis-ci.org/indiv0/xkcd-rs" title="Travis Build Status"><img src="https://travis-ci.org/indiv0/xkcd-rs.svg?branch=master" alt="travis-badge"></img></a></td>
     </tr>
     <tr>
