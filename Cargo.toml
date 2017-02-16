@@ -29,7 +29,8 @@ rand = "0.3.14"
 serde = "0.9.5"
 serde_json = "0.9.4"
 serde_derive = "0.9.5"
-url_serde = "0.1"
+url = "1.4.0"
+url_serde = "0.1.1"
 
 [dependencies.clippy]
 optional = true
@@ -37,11 +38,7 @@ version = "0.0"
 
 [dependencies.hyper]
 optional = true
-version = "0.9.5"
-
-[dependencies.url]
-features = ["serde"]
-version = "1.1.1"
+version = "0.10.4"
 
 [features]
 default = ["hyper"]
