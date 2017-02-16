@@ -1,6 +1,6 @@
 [package]
 name = "xkcd"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Nikita Pekin <contact@nikitapek.in>"]
 description = "Interface for the XKCD web API"
 repository = "https://github.com/indiv0/xkcd-rs"

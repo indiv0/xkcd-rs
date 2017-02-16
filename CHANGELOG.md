@@ -1,3 +1,14 @@
+<a name="v0.2.2"></a>
+## v0.2.2 (2017-02-16)
+
+
+#### Improvements
+
+* update `serde`/`serde_json`/`serde_derive`, use the `?` operator instead of
+  try. ([f8c20c0](https://github.com/indiv0/xkcd-rs/commit/f8c20c0efbfa6341578d63fb1b6e2296cf719032))
+
+
+
 <a name="v0.2.1"></a>
 ## v0.2.1 (2016-12-01)
 
