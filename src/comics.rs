@@ -14,7 +14,6 @@
 
 use error::Result;
 use model::XkcdResponse;
-
 use super::{XkcdRequestSender, parse_xkcd_response};
 
 /// Retrieves information regarding a specified comic from the XKCD website.

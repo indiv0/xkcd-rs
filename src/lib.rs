@@ -69,7 +69,6 @@ pub trait XkcdRequestSender {
 
 #[cfg(feature = "hyper")]
 mod hyper_support {
-
     use error::{HttpRequestError, HttpRequestResult};
     use hyper;
     use hyper::status::StatusCode;
