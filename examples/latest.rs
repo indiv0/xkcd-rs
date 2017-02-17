@@ -8,10 +8,17 @@
 // except according to those terms.
 
 extern crate hyper;
+extern crate hyper_native_tls;
 extern crate xkcd;
 
+use hyper::Client;
+use hyper::net::HttpsConnector;
+use hyper_native_tls::NativeTlsClient;
+
 fn main() {
-    let client = hyper::Client::new();
+    let tls = NativeTlsClient::new().unwrap();
+    let connector = HttpsConnector::new(tls);
+    let client = Client::with_connector(connector);
 
     // Retrieve the latest comic.
     let latest_comic = xkcd::comics::latest(&client);
