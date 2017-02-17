@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Nikita Pekin and the xkcd_rs contributors
+// Copyright (c) 2016-2017 Nikita Pekin and the xkcd_rs contributors
 // See the README.md file at the top-level directory of this distribution.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -14,7 +14,6 @@
 
 use error::Result;
 use model::XkcdResponse;
-
 use super::{XkcdRequestSender, parse_xkcd_response};
 
 /// Retrieves information regarding a specified comic from the XKCD website.
@@ -38,45 +37,20 @@ pub fn latest<R>(client: &R) -> Result<XkcdResponse>
 mod tests {
     use super::{get, latest};
     use super::super::test_helpers::MockXkcdRequestSender;
+    use util::read_sample_data_from_path;
 
     #[test]
     fn test_get_comic_ok_response() {
-        let client = MockXkcdRequestSender::respond_with(r#"
-            {
-                "month": "9",
-                "num": 1572,
-                "link": "http:\/\/goo.gl\/forms\/pj0OhX6wfO",
-                "year": "2015",
-                "news": "",
-                "safe_title": "xkcd Survey",
-                "transcript": "Introducing the XKCD SURVEY! A search for weird correlations.\n\nNOTE: This survey is anonymous, but all responses will be posted publicly so people can play with the data.\n\nClick here to take the survey.\n\nhttp:\n\ngoo.gl\nforms\nlzZr7P9Qlm\n\nOr click here, or here. The whole comic is a link because I still haven't gotten the hang of HTML imagemaps.\n\n{{Title text: The xkcd Survey: Big Data for a Big Planet}}",
-                "alt": "The xkcd Survey: Big Data for a Big Planet",
-                "img": "http:\/\/imgs.xkcd.com\/comics\/xkcd_survey.png",
-                "title": "xkcd Survey",
-                "day": "1"
-            }
-        "#);
+        let response = read_sample_data_from_path("tests/sample-data/example.json");
+        let client = MockXkcdRequestSender::respond_with(response);
         let result = get(&client, 1572).unwrap();
         assert_eq!(result.num, 1572);
     }
 
     #[test]
     fn test_latest_comic_ok_response() {
-        let client = MockXkcdRequestSender::respond_with(r#"
-            {
-                "month": "9",
-                "num": 1572,
-                "link": "http:\/\/goo.gl\/forms\/pj0OhX6wfO",
-                "year": "2015",
-                "news": "",
-                "safe_title": "xkcd Survey",
-                "transcript": "Introducing the XKCD SURVEY! A search for weird correlations.\n\nNOTE: This survey is anonymous, but all responses will be posted publicly so people can play with the data.\n\nClick here to take the survey.\n\nhttp:\n\ngoo.gl\nforms\nlzZr7P9Qlm\n\nOr click here, or here. The whole comic is a link because I still haven't gotten the hang of HTML imagemaps.\n\n{{Title text: The xkcd Survey: Big Data for a Big Planet}}",
-                "alt": "The xkcd Survey: Big Data for a Big Planet",
-                "img": "http:\/\/imgs.xkcd.com\/comics\/xkcd_survey.png",
-                "title": "xkcd Survey",
-                "day": "1"
-            }
-        "#);
+        let response = read_sample_data_from_path("tests/sample-data/example.json");
+        let client = MockXkcdRequestSender::respond_with(response);
         let result = latest(&client).unwrap();
         assert_eq!(result.num, 1572);
     }

@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Nikita Pekin and the xkcd_rs contributors
+// Copyright (c) 2016-2017 Nikita Pekin and the xkcd_rs contributors
 // See the README.md file at the top-level directory of this distribution.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or

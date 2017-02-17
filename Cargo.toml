@@ -40,6 +40,9 @@ version = "0.0"
 optional = true
 version = "0.10.4"
 
+[dev_dependencies]
+hyper-native-tls = "0.2.2"
+
 [features]
 default = ["hyper"]
 nightly-testing = ["clippy"]
