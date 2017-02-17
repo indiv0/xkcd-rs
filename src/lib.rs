@@ -121,7 +121,7 @@ mod test_helpers {
 
     impl MockXkcdRequestSender {
         pub fn respond_with<S: Into<String>>(response: S) -> Self {
-            MockXkcdRequestSender { response: response.into(), }
+            MockXkcdRequestSender { response: response.into() }
         }
     }
 
