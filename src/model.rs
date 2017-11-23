@@ -12,6 +12,10 @@
 //! For more information, see [XKCD's API
 //! documentation](https://xkcd.com/json.html).
 
+use serde::Deserialize;
+use serde::de::{self, Deserializer};
+use std::fmt::Display;
+use std::str::FromStr;
 use url::Url;
 use url_serde;
 
@@ -20,6 +24,7 @@ use url_serde;
 pub struct XkcdResponse {
     /// The month the comic was published in, represented as an integer from 1
     /// to 12.
+    #[serde(deserialize_with = "de_from_str")]
     pub month: u8,
     /// The number/ID of the comic.
     pub num: u32,
@@ -27,6 +32,7 @@ pub struct XkcdResponse {
     /// image is a hyperlinked one.
     pub link: String,
     /// The year the comic was published in.
+    #[serde(deserialize_with = "de_from_str")]
     pub year: u32,
     /// News or updates regarding the comic.
     pub news: String,
@@ -42,7 +48,17 @@ pub struct XkcdResponse {
     /// The title of the comic.
     pub title: String,
     /// The day of the month the comic was published on.
+    #[serde(deserialize_with = "de_from_str")]
     pub day: u8,
+}
+
+fn de_from_str<'de, D, T>(deserializer: D) -> Result<T, D::Error>
+    where D: Deserializer<'de>,
+          T: FromStr,
+          T::Err: Display,
+{
+    let s = String::deserialize(deserializer)?;
+    T::from_str(&s).map_err(de::Error::custom)
 }
 
 #[cfg(test)]

@@ -51,8 +51,8 @@ pub mod random;
 use serde::Deserialize;
 use std::fmt::Debug;
 
-fn parse_xkcd_response<T>(response: &str) -> Result<T>
-    where T: Debug + Deserialize,
+fn parse_xkcd_response<'de, T>(response: &'de str) -> Result<T>
+    where T: Debug + Deserialize<'de>,
 {
     let parsed_response = serde_json::from_str(response)?;
     trace!("Parsed response: {:?}", parsed_response);
