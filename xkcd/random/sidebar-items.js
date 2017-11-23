@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["random","Retrieves information regarding a random comic from all comics on the XKCD website."],["random_in_range","Retrieves information regarding a random comic from the XKCD website in the specified range."]]});

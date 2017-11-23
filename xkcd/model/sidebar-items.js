@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["XkcdResponse","`XkcdResponse` is the outer wrapper for all results from the XKCD API query."]]});

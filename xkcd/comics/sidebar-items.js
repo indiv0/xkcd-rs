@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["get","Retrieves information regarding a specified comic from the XKCD website."],["latest","Retrieves information regarding the latest comic from the XKCD website."]]});
