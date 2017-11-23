@@ -24,6 +24,7 @@ include = [
 ]
 
 [dependencies]
+futures = "*"
 log = "0.3.8"
 rand = "0.3.18"
 serde = "1.0.21"
@@ -38,10 +39,11 @@ version = "0.0"
 
 [dependencies.hyper]
 optional = true
-version = "0.10.4"
+version = "0.11.7"
 
 [dev_dependencies]
-hyper-native-tls = "0.2.2"
+hyper-tls = "0.1.2"
+tokio-core = "*"
 
 [features]
 default = ["hyper"]

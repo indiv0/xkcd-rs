@@ -10,7 +10,8 @@
 //! Retrieves information on a random XKCD comic.
 
 use comics;
-use error::Result;
+use error::Error;
+use futures::Future;
 use model::XkcdResponse;
 use rand::{self, Rng};
 use std::ops::Range;
@@ -18,30 +19,39 @@ use super::XkcdRequestSender;
 
 /// Retrieves information regarding a random comic from the XKCD website in the
 /// specified range.
-pub fn random_in_range<R>(client: &R, range: Range<u32>) -> Result<XkcdResponse>
+pub fn random_in_range<'a, R>(client: &'a R, range: Range<u32>) -> Box<'a + Future<Item = XkcdResponse, Error = Error>>
     where R: XkcdRequestSender,
 {
     let random_id = rand::thread_rng().gen_range(range.start, range.end);
     trace!("Randomly generated ID: {}", random_id);
-    comics::get(client, random_id)
+    let res = comics::get(client, random_id);
+
+    Box::new(res)
 }
 
 /// Retrieves information regarding a random comic from all comics on the XKCD
 /// website.
-pub fn random<R>(client: &R) -> Result<XkcdResponse>
+pub fn random<'a, R>(client: &'a R) -> Box<'a + Future<Item = XkcdResponse, Error = Error>>
     where R: XkcdRequestSender,
 {
-    let latest_comic = comics::latest(client)?;
-    random_in_range(client, (1..latest_comic.num + 1))
+    let res = comics::latest(client)
+        .and_then(move |latest_comic| {
+            random_in_range(client, (1..latest_comic.num + 1))
+        });
+
+    Box::new(res)
 }
 
 #[cfg(test)]
 mod tests {
     use super::{random, random_in_range};
-    use super::super::test_helpers::MockXkcdRequestSender;
+    use test_helpers::MockXkcdRequestSender;
+    use tokio_core::reactor::Core;
 
     #[test]
     fn test_random_in_range_comic_ok_response() {
+        let mut core = Core::new().unwrap();
+
         let client = MockXkcdRequestSender::respond_with(r#"
             {
                 "month": "9",
@@ -57,12 +67,14 @@ mod tests {
                 "day": "1"
             }
         "#);
-        let result = random_in_range(&client, (1..1573)).unwrap();
+        let result = core.run(random_in_range(&client, (1..1573))).unwrap();
         assert_eq!(result.num, 1572);
     }
 
     #[test]
     fn test_random_comic_ok_response() {
+        let mut core = Core::new().unwrap();
+
         let client = MockXkcdRequestSender::respond_with(r#"
             {
                 "month": "9",
@@ -78,7 +90,7 @@ mod tests {
                 "day": "1"
             }
         "#);
-        let result = random(&client).unwrap();
+        let result = core.run(random(&client)).unwrap();
         assert_eq!(result.num, 1572);
     }
 }

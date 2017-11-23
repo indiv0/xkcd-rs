@@ -12,6 +12,7 @@ use std::error::Error as StdError;
 use std::fmt;
 use std::io;
 use std::result::Result as StdResult;
+use std::str::Utf8Error;
 use url::Url;
 
 /// A convenient alias type for results for `xkcd`.
@@ -88,9 +89,6 @@ impl PartialEq<Error> for Error {
     }
 }
 
-/// A convenient alias type for results of HTTP requests.
-pub type HttpRequestResult<T> = StdResult<T, HttpRequestError>;
-
 /// Represents errors which occur when sending an HTTP request to the XKCD API.
 #[derive(Debug)]
 pub enum HttpRequestError {
@@ -100,6 +98,8 @@ pub enum HttpRequestError {
     NotFound(Url),
     /// Any other error occuring during an HTTP request.
     Other(Box<StdError>),
+    /// Error while parsing bytes as a UTF-8 string.
+    Utf8(Utf8Error),
 }
 
 impl HttpRequestError {
@@ -114,6 +114,7 @@ impl fmt::Display for HttpRequestError {
         match *self {
             HttpRequestError::Io(ref e) => e.fmt(f),
             HttpRequestError::Other(ref e) => e.fmt(f),
+            HttpRequestError::Utf8(ref e) => e.fmt(f),
             ref other => write!(f, "{}", other.description()),
         }
     }
@@ -125,6 +126,7 @@ impl StdError for HttpRequestError {
             HttpRequestError::Io(ref e) => e.description(),
             HttpRequestError::NotFound(_) => "comic was not found",
             HttpRequestError::Other(ref e) => e.description(),
+            HttpRequestError::Utf8(ref e) => e.description(),
         }
     }
 
@@ -132,6 +134,7 @@ impl StdError for HttpRequestError {
         match *self {
             HttpRequestError::Io(ref e) => e.cause(),
             HttpRequestError::Other(ref e) => e.cause(),
+            HttpRequestError::Utf8(ref e) => e.cause(),
             _ => None,
         }
     }
@@ -140,5 +143,11 @@ impl StdError for HttpRequestError {
 impl From<io::Error> for HttpRequestError {
     fn from(error: io::Error) -> HttpRequestError {
         HttpRequestError::Io(error)
+    }
+}
+
+impl From<Utf8Error> for HttpRequestError {
+    fn from(error: Utf8Error) -> HttpRequestError {
+        HttpRequestError::Utf8(error)
     }
 }
