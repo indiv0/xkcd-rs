@@ -7,7 +7,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-#![deny(missing_docs, non_camel_case_types, warnings)]
+#![deny(missing_docs, non_camel_case_types)]
 #![cfg_attr(feature = "clippy", feature(plugin))]
 #![cfg_attr(feature = "clippy", plugin(clippy))]
 
@@ -27,6 +27,7 @@
 #[cfg(feature = "hyper")]
 extern crate hyper;
 
+extern crate futures;
 #[macro_use]
 extern crate log;
 extern crate rand;
@@ -34,6 +35,8 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
+#[cfg(test)]
+extern crate tokio_core;
 extern crate url;
 extern crate url_serde;
 
@@ -41,18 +44,19 @@ mod error;
 #[cfg(test)]
 mod util;
 
-pub use self::error::{Error, HttpRequestError, HttpRequestResult, Result};
+pub use self::error::{Error, HttpRequestError, Result};
 pub use self::model::XkcdResponse;
 
 pub mod comics;
 pub mod model;
 pub mod random;
 
+use futures::Future;
 use serde::Deserialize;
 use std::fmt::Debug;
 
-fn parse_xkcd_response<T>(response: &str) -> Result<T>
-    where T: Debug + Deserialize,
+fn parse_xkcd_response<'de, T>(response: &'de str) -> Result<T>
+    where T: Debug + Deserialize<'de>,
 {
     let parsed_response = serde_json::from_str(response)?;
     trace!("Parsed response: {:?}", parsed_response);
@@ -64,37 +68,52 @@ fn parse_xkcd_response<T>(response: &str) -> Result<T>
 /// Should be implemented for clients to send requests to the XKCD API.
 pub trait XkcdRequestSender {
     /// Performs an API call to the XKCD web API.
-    fn send(&self, method: &str) -> HttpRequestResult<String>;
+    fn send<'a>(&'a self, method: &str) -> Box<'a + Future<Item = String, Error = HttpRequestError>>;
 }
 
 #[cfg(feature = "hyper")]
 mod hyper_support {
-    use error::{HttpRequestError, HttpRequestResult};
-    use hyper;
-    use hyper::status::StatusCode;
-    use std::io::Read;
+    use error::HttpRequestError;
+    use futures::{Future, Stream};
+    use futures::future::result;
+    use hyper::{self, StatusCode, Uri};
+    use hyper::client::Connect;
+    use std::str::{self, FromStr};
     use super::XkcdRequestSender;
     use url::Url;
 
-    impl XkcdRequestSender for hyper::Client {
-        fn send(&self, method: &str) -> HttpRequestResult<String> {
+    impl<C> XkcdRequestSender for hyper::Client<C>
+        where C: Connect,
+    {
+        fn send<'a>(&'a self, method: &str) -> Box<'a + Future<Item = String, Error = HttpRequestError>> {
             let url_string = format!("https://xkcd.com/{}", method);
             let url = url_string.parse::<Url>().expect("Unable to parse URL");
+            let uri = Uri::from_str(url.as_ref()).map_err(hyper::Error::from);
 
-            trace!("Sending query to url: {}", url);
-            let mut response = self.get(url.clone()).send()?;
+            let res = result(uri)
+                .and_then(move |uri| {
+                    trace!("Sending query to URI: {}", uri);
+                    self.get(uri)
+                })
+                .map_err(From::from)
+                .and_then(|res| {
+                    trace!("Response status: {}", res.status());
 
-            trace!("Status code: {}", response.status);
-            // Ensure we got a valid status code.
-            if let StatusCode::NotFound = response.status {
-                return Err(HttpRequestError::not_found(url));
-            }
+                    // Ensure we got a valid status code.
+                    if let StatusCode::NotFound = res.status() {
+                        Err(HttpRequestError::not_found(url))
+                    } else {
+                        Ok(res)
+                    }
+                })
+                .and_then(|res| res.body().concat2().map_err(From::from))
+                .and_then(|body| {
+                    str::from_utf8(&body)
+                        .map_err(From::from)
+                        .map(|string| string.to_string())
+                });
 
-            let mut result = String::new();
-            response.read_to_string(&mut result)?;
-            trace!("Query result: {}", result);
-
-            Ok(result)
+            Box::new(res)
         }
     }
 
@@ -113,6 +132,8 @@ pub use hyper_support::*;
 
 #[cfg(test)]
 mod test_helpers {
+    use futures::Future;
+    use futures::future::result;
     use super::{HttpRequestError, XkcdRequestSender};
 
     pub struct MockXkcdRequestSender {
@@ -126,8 +147,8 @@ mod test_helpers {
     }
 
     impl XkcdRequestSender for MockXkcdRequestSender {
-        fn send(&self, _: &str) -> Result<String, HttpRequestError> {
-            Ok(self.response.clone())
+        fn send(&self, _: &str) -> Box<Future<Item = String, Error = HttpRequestError>> {
+            Box::new(result(Ok(self.response.clone())))
         }
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Nikita Pekin and the xkcd_rs contributors
+// Copyright (c) 2016-2017 Nikita Pekin and the xkcd_rs contributors
 // See the README.md file at the top-level directory of this distribution.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -7,21 +7,25 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+extern crate futures;
 extern crate hyper;
-extern crate hyper_native_tls;
+extern crate hyper_tls;
+extern crate tokio_core;
 extern crate xkcd;
 
 use hyper::Client;
-use hyper::net::HttpsConnector;
-use hyper_native_tls::NativeTlsClient;
+use hyper_tls::HttpsConnector;
+use tokio_core::reactor::Core;
 
 fn main() {
-    let tls = NativeTlsClient::new().unwrap();
-    let connector = HttpsConnector::new(tls);
-    let client = Client::with_connector(connector);
+    let mut core = Core::new().unwrap();
+    let client = Client::configure()
+        .connector(HttpsConnector::new(4, &core.handle()).unwrap())
+        .build(&core.handle());
 
     // Retrieve the latest comic ID.
-    let latest_id = xkcd::comics::latest(&client).unwrap().num;
+    let work = xkcd::comics::latest(&client);
+    let latest_id = core.run(work).unwrap().num;
 
     // Retrieve all the comics.
     let mut all_comics = Vec::new();
@@ -34,7 +38,8 @@ fn main() {
             continue;
         }
 
-        all_comics.push(xkcd::comics::get(&client, i).unwrap());
+        let work = xkcd::comics::get(&client, i);
+        all_comics.push(core.run(work).unwrap());
         println!("Read comic: {}", i);
     }
 }

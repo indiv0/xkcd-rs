@@ -12,46 +12,64 @@
 //! For more information, see [XKCD's API
 //! documentation](https://xkcd.com/json.html).
 
-use error::Result;
+use error::Error;
+use futures::Future;
 use model::XkcdResponse;
 use super::{XkcdRequestSender, parse_xkcd_response};
 
 /// Retrieves information regarding a specified comic from the XKCD website.
-pub fn get<R>(client: &R, id: u32) -> Result<XkcdResponse>
+pub fn get<'a, R>(client: &'a R, id: u32) -> Box<'a + Future<Item = XkcdResponse, Error = Error>>
     where R: XkcdRequestSender,
 {
     let method = format!("{}/info.0.json", id);
-    let response = client.send(&method)?;
-    parse_xkcd_response(&response)
+    let res = client.send(&method)
+        .map_err(From::from)
+        .and_then(|res| {
+            parse_xkcd_response(&res)
+        })
+        .map_err(From::from);
+
+    Box::new(res)
 }
 
 /// Retrieves information regarding the latest comic from the XKCD website.
-pub fn latest<R>(client: &R) -> Result<XkcdResponse>
+pub fn latest<'a, R>(client: &'a R) -> Box<'a + Future<Item = XkcdResponse, Error = Error>>
     where R: XkcdRequestSender,
 {
-    let response = client.send("info.0.json")?;
-    parse_xkcd_response(&response)
+    let res = client.send("info.0.json")
+        .map_err(From::from)
+        .and_then(|res| {
+            parse_xkcd_response(&res)
+        })
+        .map_err(From::from);
+
+    Box::new(res)
 }
 
 #[cfg(test)]
 mod tests {
     use super::{get, latest};
-    use super::super::test_helpers::MockXkcdRequestSender;
+    use test_helpers::MockXkcdRequestSender;
+    use tokio_core::reactor::Core;
     use util::read_sample_data_from_path;
 
     #[test]
     fn test_get_comic_ok_response() {
+        let mut core = Core::new().unwrap();
+
         let response = read_sample_data_from_path("tests/sample-data/example.json");
         let client = MockXkcdRequestSender::respond_with(response);
-        let result = get(&client, 1572).unwrap();
+        let result = core.run(get(&client, 1572)).unwrap();
         assert_eq!(result.num, 1572);
     }
 
     #[test]
     fn test_latest_comic_ok_response() {
+        let mut core = Core::new().unwrap();
+
         let response = read_sample_data_from_path("tests/sample-data/example.json");
         let client = MockXkcdRequestSender::respond_with(response);
-        let result = latest(&client).unwrap();
+        let result = core.run(latest(&client)).unwrap();
         assert_eq!(result.num, 1572);
     }
 }
