@@ -30,7 +30,7 @@ Add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-xkcd = "0.2"
+xkcd = "0.3"
 ```
 
 And in your `lib.rs` or `main.rs`:

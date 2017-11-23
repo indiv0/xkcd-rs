@@ -1,3 +1,20 @@
+<a name="v0.3.0"></a>
+## v0.3.0 (2017-11-23)
+
+
+#### Bug Fixes
+
+* **examples:**  use `hyper-native-tls` for TLS ([d342be5c](https://github.com/indiv0/xkcd-rs/commit/d342be5cc1b7f13da9cf98c461fb87a4359e6ccf), closes [#18](https://github.com/indiv0/xkcd-rs/issues/18))
+
+#### Improvements
+
+*   switch to an async API ([aec9d494](https://github.com/indiv0/xkcd-rs/commit/aec9d4944e509471d09461a3f572b9a2f6782488))
+*   update for latest serde ([d2c53e37](https://github.com/indiv0/xkcd-rs/commit/d2c53e376f5b89b2b71e435b3fc31bb12ada2821))
+*   clean up tests ([348824ed](https://github.com/indiv0/xkcd-rs/commit/348824ede5f67a3cca0a8568551c0135e4380c57))
+* **examples:**  "all" example output more verbose ([adc03ae2](https://github.com/indiv0/xkcd-rs/commit/adc03ae27f8a81b97841282b2e74c42b57d6b44c))
+
+
+
 <a name="v0.2.2"></a>
 ## v0.2.2 (2017-02-16)
 

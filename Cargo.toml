@@ -1,6 +1,6 @@
 [package]
 name = "xkcd"
-version = "0.2.2"
+version = "0.3.0"
 authors = ["Nikita Pekin <contact@nikitapek.in>"]
 description = "Interface for the XKCD web API"
 repository = "https://github.com/indiv0/xkcd-rs"
@@ -24,7 +24,7 @@ include = [
 ]
 
 [dependencies]
-futures = "*"
+futures = "0.1.17"
 log = "0.3.8"
 rand = "0.3.18"
 serde = "1.0.21"
